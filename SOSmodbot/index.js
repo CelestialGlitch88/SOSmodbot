@@ -128,19 +128,26 @@ client.on('message_create', async (msg) => {
 
     console.log(`⚠️  [${dayNight}] ${name} (+${number}) — ${violationType} — Strike #${strikeCount}`);
 
-    // ── Night-time: DM every top-level admin ─────────────────────
-    if (night) {
+    // ── DM admins: night (any strike) OR day 2nd+ strike ─────────
+    const shouldDM = night || strikeCount >= 2;
+
+    if (shouldDM) {
       const admins = await getActiveAdmins();
 
       if (admins.length === 0) {
-        console.warn('⚠️  Night violation but Admin Roster is empty — add admins to sos_log.xlsx');
+        console.warn('⚠️  DM needed but Admin Roster is empty — add admins to sos_log.xlsx');
         return;
       }
 
       const violationLabel = isForward ? '📨 Forwarded Message' : '🔗 Link Shared';
+      const alertType = night ? '🌙 NIGHT ALERT' : '☀️ REPEAT OFFENDER';
+      const context   = night
+        ? 'A violation occurred while the group should be quiet.'
+        : `This member has violated group rules ${strikeCount} times.`;
+
       const dmText =
-        `🚨 *SOS BOT — NIGHT ALERT*\n\n` +
-        `A violation occurred while the group should be quiet.\n\n` +
+        `🚨 *SOS BOT — ${alertType}*\n\n` +
+        `${context}\n\n` +
         `👤 *Member:* ${name} (+${number})\n` +
         `⚠️ *Violation:* ${violationLabel}\n` +
         `🎯 *Strike:* #${strikeCount}\n` +
@@ -150,15 +157,14 @@ client.on('message_create', async (msg) => {
 
       for (const admin of admins) {
         try {
-          const adminContact = `${admin.number}@c.us`;
-          await client.sendMessage(adminContact, dmText);
+          await client.sendMessage(`${admin.number}@c.us`, dmText);
           console.log(`  → DM sent to ${admin.name} (+${admin.number})`);
         } catch (e) {
           console.warn(`  → Failed to DM ${admin.name}:`, e.message);
         }
       }
     }
-    // Day-time: silent — XLSX log only, no pings
+    // Day 1st strike: silent — XLSX log only
 
   } catch (err) {
     console.error('Bot error:', err.message);

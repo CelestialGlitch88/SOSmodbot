@@ -8,8 +8,9 @@ const fs = require('fs');
 const XLSX_PATH = path.join(__dirname, 'logs', 'sos_log.xlsx');
 
 // ── Colours ────────────────────────────────────────────────────────
-const RED    = { argb: 'FFFF4444' };
-const ORANGE = { argb: 'FFFFA500' };
+const RED    = { argb: 'FFFF4444' }; // day 2nd+ strike
+const ORANGE = { argb: 'FFFFA500' }; // day 1st strike
+const PURPLE = { argb: 'FF7C3AED' }; // night violation (distinct from day red)
 const WHITE  = { argb: 'FFFFFFFF' };
 
 function rowFill(colour) {
@@ -56,9 +57,9 @@ async function logStrike({ timestamp, name, number, violationType, strikeCount, 
 
   let fill;
   if (night) {
-    fill = RED; // any night strike → red
+    fill = PURPLE;                            // night → purple (distinct)
   } else {
-    fill = strikeCount === 1 ? ORANGE : RED; // day: 1st=orange, 2nd+=red
+    fill = strikeCount === 1 ? ORANGE : RED;  // day: 1st=orange, 2nd+=red
   }
 
   await appendRow('Strikes', [

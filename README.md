@@ -1,8 +1,7 @@
 # SOSmodbot
-Whatsapp moderator bot for Volunteer SOS groups
-# 🛡️ SOS Group Bot v2
+# 
 
-WhatsApp moderation bot for Apartment SOS volunteer groups.
+WhatsApp moderation bot for SOS volunteer groups.
 
 ## What it does
 
@@ -19,10 +18,9 @@ WhatsApp moderation bot for Apartment SOS volunteer groups.
 
 | Colour | Meaning |
 |--------|---------|
-| 🔴 Red | Night violation (any strike) OR day 2nd+ strike |
-| 🟠 Orange | Day violation, 1st strike |
-| No highlight | Clean message |
-
+| 🟣 Purple | Night violation → DMs sent |
+| 🟠 Orange | Day 1st strike (silent) |
+| 🔴 Red | Day 2nd+ strike → DMs sent |
 ## Requirements
 
 - [Node.js 18+](https://nodejs.org)
@@ -37,35 +35,20 @@ WhatsApp moderation bot for Apartment SOS volunteer groups.
 ### 1. Clone
 ```bash
 git clone https://github.com/YOUR_USERNAME/sos-group-bot.git
-cd sos-group-bot
+cd to your directory
 ```
 
 ### 2. Install
 ```bash
 npm install
-pip3 install openpyxl   # one-time only
 ```
 
-### 3. Create the XLSX log file
-```bash
-node scripts/seed-xlsx.js
-```
-This creates `logs/sos_log.xlsx` with all 3 sheets pre-formatted.
-
-### 4. Add top-level admins
-Open `logs/sos_log.xlsx` → go to **Admin Roster** tab → fill in admin names and phone numbers (with country code, e.g. `919876543210`). Set Active column to `YES`.
-
-### 5. Configure
-```bash
-cp .env.example .env
-```
-No extra config needed — admin numbers come from the XLSX.
-
-### 6. Run
+### 3. Run
 ```bash
 npm start
 ```
-Scan QR with the bot's WhatsApp account. Open `http://localhost:3000` for the dashboard.
+
+On first run, a **setup wizard** will appear in the terminal asking for admin names and phone numbers. Fill these in and the XLSX is created automatically. After that, scan the QR with the bot's WhatsApp account.
 
 ---
 
@@ -74,30 +57,38 @@ Scan QR with the bot's WhatsApp account. Open `http://localhost:3000` for the da
 ```bash
 git init
 git add .
-git commit -m "SOS bot v2"
+git commit -m "SOS bot v3"
 git branch -M main
 git remote add origin https://github.com/YOUR_USERNAME/sos-group-bot.git
 git push -u origin main
 ```
 
-> ✅ `.env` and `logs/` are gitignored — your data and secrets stay local.
+> ✅ `logs/` is gitignored — your XLSX data stays local.
 
 ---
 
-## Hosting for 24/7 uptime
+## Managing admins
 
-### Railway (easiest cloud option)
-1. Push to GitHub
-2. [railway.app](https://railway.app) → New Project → Deploy from GitHub
-3. Set `DASHBOARD_PORT=3000` in Railway environment variables
+Open `logs/sos_log.xlsx` → **Admin Roster** tab at any time to:
+- Add new admins (set Active to YES)
+- Deactivate admins (set Active to NO)
+- Edit roles or numbers
 
-### Old Android + Termux (free, always on)
+Changes take effect immediately — no restart needed.
+
+---
+
+## Hosting
+
+### Any Linux VPS (Hetzner, DigitalOcean, Oracle)
 ```bash
-pkg install nodejs python git
-pip install openpyxl
-git clone https://github.com/YOUR_USERNAME/sos-group-bot.git
-cd sos-group-bot && npm install
-node scripts/seed-xlsx.js
-npm start
+npm install -g pm2
+pm2 start run.js --name sos-bot
+pm2 save && pm2 startup
 ```
-Plug in the phone, disable sleep. Done.
+
+### Updating after code changes
+```bash
+git pull
+pm2 restart sos-bot
+```

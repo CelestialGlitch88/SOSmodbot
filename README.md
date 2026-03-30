@@ -24,7 +24,7 @@ WhatsApp moderation bot for SOS volunteer groups.
 ## Requirements
 
 - [Node.js 18+](https://nodejs.org)
-- [Python 3 + openpyxl](https://pypi.org/project/openpyxl/) (for initial XLSX setup only)
+- Python 3
 - A dedicated WhatsApp number for the bot
 - Bot must be added as **admin** to the SOS group
 

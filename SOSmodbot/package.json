@@ -1,0 +1,20 @@
+{
+  "name": "sos-group-bot",
+  "version": "2.0.0",
+  "description": "WhatsApp moderation bot for Apartment SOS volunteer group — with XLSX logging and time-aware admin pings",
+  "main": "index.js",
+  "scripts": {
+    "bot": "node index.js",
+    "dashboard": "node server.js",
+    "start": "node run.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.23.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
